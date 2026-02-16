@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Intramurals Eligibility Checker</title>
+  <style>
+    body{font-family:Segoe UI,Arial,sans-serif;padding:24px;background:#f7f9fc}
+    .card{background:#fff;padding:18px;border-radius:8px;max-width:520px;box-shadow:0 2px 8px rgba(20,30,50,0.06)}
+    label{display:block;margin:10px 0 6px;font-weight:600}
+    .row{display:flex;gap:8px;align-items:center}
+    select,input[type=text]{flex:1;padding:8px;border:1px solid #d3d9e6;border-radius:6px}
+    button{margin-top:12px;padding:10px 14px;border:0;background:#0b5fff;color:#fff;border-radius:6px;cursor:pointer}
+    #result{margin-top:14px;padding:12px;border-radius:6px}
+    .eligible{color:#075e26;font-weight:700}
+    .team{margin-top:6px;color:#08306b}
+    .ineligible{color:#7a0710;font-weight:700}
+    ul{margin:8px 0 0 18px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Intramurals Eligibility Checker</h2>
+
+    <label>
+      <input type="checkbox" id="registered" /> Confirmation of Intramurals online registration
+    </label>
+
+    <label>
+      <input type="checkbox" id="medical" /> Confirmation of medical clearance
+    </label>
+
+    <label for="grade">Grade Level</label>
+    <div class="row">
+      <select id="grade">
+        <option value="">Select grade</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+      </select>
+      <input type="text" id="section" placeholder="Section (e.g., Ruby)" />
+    </div>
+
+    <button type="button" id="pycheck">Check Eligibility</button>
+
+    <div id="result" aria-live="polite"></div>
+  </div>
+
+  <script>
+function checkPy() {
+    const registered = document.getElementById('registered').checked;
+    const medical = document.getElementById('medical').checked;
+    const gradeVal = document.getElementById('grade').value;
+    const grade = gradeVal ? parseInt(gradeVal) : null;
+    const section = document.getElementById('section').value.trim();
+    const out = document.getElementById('result');
+    out.innerHTML = '';
+
+    const missing = [];
+    if (!registered) {
+        missing.push('Please register online to join the Intramurals.');
+    }
+    if (!medical) {
+        missing.push('Please secure a medical clearance before joining.');
+    }
+    if (grade === null || grade < 7 || grade > 10) {
+        missing.push('Student must be in Grade 7–10 to be eligible.');
+    }
+
+    if (missing.length === 0) {
+        const teams = {7: 'Blue Bears', 8: 'Red Bulldogs', 9: 'Yellow Tigers', 10: 'Green Hornets'};
+        const team = teams[grade] || 'Assigned Team';
+        out.innerHTML = (
+            "<p class='eligible'>Congratulations! You are eligible to join the Intramurals.</p>" +
+            "<p class='team'>Assigned Team: <strong>" + team + "</strong></p>" +
+            "<p>Grade &amp; Section: " + grade + " - " + (section || 'N/A') + "</p>"
+        );
+    } else {
+        let lis = '';
+        for (let m of missing) {
+            lis += "<li>" + m + "</li>";
+        }
+        out.innerHTML = (
+            "<p class='ineligible'>You are not eligible to join the Intramurals.</p>" +
+            "<ul>" + lis + "</ul>"
+        );
+    }
+}
+
+document.getElementById('pycheck').addEventListener('click', checkPy);
+  </script>
+</body>
+</html>
